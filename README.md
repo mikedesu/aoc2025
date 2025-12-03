@@ -6,9 +6,9 @@
 
 - [x] Day 1: completed 12-02-2025
 - [x] Day 2: completed 12-02-2025
-    - [x] Part 1: completed 12-02-2025
-    - [x] Part 2: completed 12-02-2025
 - [ ] Day 3: completed 12-XX-2025
+    - [x] Part 1: completed 12-03-2025
+    - [ ] Part 2: completed 12-XX-2025
 - [ ] Day 4: completed 12-XX-2025
 - [ ] Day 5: completed 12-XX-2025
 - [ ] Day 6: completed 12-XX-2025

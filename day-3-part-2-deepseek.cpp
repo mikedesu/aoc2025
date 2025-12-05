@@ -27,13 +27,17 @@ long long get_largest_dp() {
     int len = n.length();
     int desired_count = 12;
     
-    // If number is 12 digits or shorter, just return the number itself
-    if (len <= desired_count) {
+    // If number is exactly 12 digits, return it
+    if (len == desired_count) {
         long long result = 0;
         for (int d : nums) {
             result = result * 10 + d;
         }
         return result;
+    }
+    // If number is shorter than 12 digits, it's invalid
+    if (len < desired_count) {
+        return -1;
     }
 
     // Initialize DP table
@@ -48,12 +52,12 @@ long long get_largest_dp() {
         for(int j=1; j<=desired_count; j++) {
             // Option 1: Take current digit
             long long take = -1;
-            if (i+1 <= len && dp[i+1][j-1] != -1) {
+            if (i+1 <= len && j-1 >= 0 && dp[i+1][j-1] != -1) {
                 take = nums[i] * power10(j-1) + dp[i+1][j-1];
             }
             
             // Option 2: Skip current digit
-            long long skip = (i+1 <= len) ? dp[i+1][j] : -1;
+            long long skip = (i+1 <= len && (len - (i+1)) >= j) ? dp[i+1][j] : -1;
             
             dp[i][j] = max(take, skip);
         }

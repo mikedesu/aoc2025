@@ -26,8 +26,17 @@ unsigned long long power10(int exp) {
 }
 
 unsigned long long get_largest_dp() {
-    int len = n.length();
+    int len = nums.size();
     int desired_count = 12;
+    
+    // If input is exactly 12 digits, return it as is
+    if (len == desired_count) {
+        unsigned long long result = 0;
+        for (int d : nums) {
+            result = result * 10 + d;
+        }
+        return result;
+    }
     
     // Initialize DP table
     for(int i=0; i<=len; i++) {
@@ -44,9 +53,9 @@ unsigned long long get_largest_dp() {
     // Fill table bottom-up
     for(int j=2; j<=desired_count; j++) {
         for(int i=0; i<=len-j; i++) {
-            // Option 1: Take current digit and take j-1 more digits from remaining
+            // Option 1: Take current digit and build from remaining
             unsigned long long take = nums[i] * power10(j-1) + dp[i+1][j-1];
-            // Option 2: Skip current digit and take j digits from remaining
+            // Option 2: Skip current digit
             unsigned long long skip = dp[i+1][j];
             
             dp[i][j] = max(take, skip);
@@ -81,15 +90,16 @@ int main(int argc, char* argv[]) {
             break;
         }
         buffer[strlen(buffer) - 1] = 0;
-        string n = string(buffer);
+        string input_num = string(buffer);
+        if (input_num.empty()) continue;
 
-        cout << n << ": ";
+        cout << input_num << ": ";
 
         nums.clear();
-        for (int i = 0; i < n.length(); i++) {
-            char c = n[i];
-            int val = c - 48;
-            nums.push_back(val);
+        for (char c : input_num) {
+            if (c >= '0' && c <= '9') {
+                nums.push_back(c - '0');
+            }
         }
 
         unsigned long long largest = get_largest_dp();

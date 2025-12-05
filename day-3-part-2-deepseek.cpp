@@ -36,23 +36,18 @@ unsigned long long get_largest_dp() {
         }
     }
     
+    // Base case: single digit
+    for(int i=0; i<len; i++) {
+        dp[i][1] = nums[i];
+    }
+    
     // Fill table bottom-up
-    for(int i=len-1; i>=0; i--) {
-        for(int j=1; j<=desired_count; j++) {
-            // Option 1: Take current digit
-            unsigned long long take = 0;
-            if (len - i >= j) { // Enough remaining digits
-                take = nums[i] * power10(j-1);
-                if (i+1 <= len && j-1 >= 0) {
-                    take += dp[i+1][j-1];
-                }
-            }
-            
-            // Option 2: Skip current digit
-            unsigned long long skip = 0;
-            if (i+1 <= len && len - (i+1) >= j) {
-                skip = dp[i+1][j];
-            }
+    for(int j=2; j<=desired_count; j++) {
+        for(int i=0; i<=len-j; i++) {
+            // Option 1: Take current digit and take j-1 more digits from remaining
+            unsigned long long take = nums[i] * power10(j-1) + dp[i+1][j-1];
+            // Option 2: Skip current digit and take j digits from remaining
+            unsigned long long skip = dp[i+1][j];
             
             dp[i][j] = max(take, skip);
         }

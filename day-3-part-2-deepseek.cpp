@@ -13,37 +13,26 @@ using std::vector;
 vector<int> nums;
 string n = "";
 
-long long dp[105][15]; // dp[i][j] = max number with j digits starting at position i
+using namespace std;
 
-long long power10(int exp) {
-    long long result = 1;
+unsigned long long dp[105][15]; // dp[i][j] = max number with j digits starting at position i
+
+unsigned long long power10(int exp) {
+    unsigned long long result = 1;
     while(exp-- > 0) {
         result *= 10;
     }
     return result;
 }
 
-long long get_largest_dp() {
+unsigned long long get_largest_dp() {
     int len = n.length();
     int desired_count = 12;
     
-    // If number is exactly 12 digits, return it
-    if (len == desired_count) {
-        long long result = 0;
-        for (int d : nums) {
-            result = result * 10 + d;
-        }
-        return result;
-    }
-    // If number is shorter than 12 digits, it's invalid
-    if (len < desired_count) {
-        return -1;
-    }
-
     // Initialize DP table
     for(int i=0; i<=len; i++) {
         for(int j=0; j<=desired_count; j++) {
-            dp[i][j] = (j == 0) ? 0 : -1;
+            dp[i][j] = 0;
         }
     }
     
@@ -51,13 +40,19 @@ long long get_largest_dp() {
     for(int i=len-1; i>=0; i--) {
         for(int j=1; j<=desired_count; j++) {
             // Option 1: Take current digit
-            long long take = -1;
-            if (i+1 <= len && j-1 >= 0 && dp[i+1][j-1] != -1) {
-                take = nums[i] * power10(j-1) + dp[i+1][j-1];
+            unsigned long long take = 0;
+            if (len - i >= j) { // Enough remaining digits
+                take = nums[i] * power10(j-1);
+                if (i+1 <= len && j-1 >= 0) {
+                    take += dp[i+1][j-1];
+                }
             }
             
             // Option 2: Skip current digit
-            long long skip = (i+1 <= len && (len - (i+1)) >= j) ? dp[i+1][j] : -1;
+            unsigned long long skip = 0;
+            if (i+1 <= len && len - (i+1) >= j) {
+                skip = dp[i+1][j];
+            }
             
             dp[i][j] = max(take, skip);
         }
@@ -84,7 +79,7 @@ int main(int argc, char* argv[]) {
 
     char buffer[2048] = {0};
 
-    long long sum = 0;
+    unsigned long long sum = 0;
     while (!feof(infile)) {
         char* ptr = fgets(buffer, 2048, infile);
         if (!ptr) {
@@ -102,7 +97,7 @@ int main(int argc, char* argv[]) {
             nums.push_back(val);
         }
 
-        long long largest = get_largest_dp();
+        unsigned long long largest = get_largest_dp();
         cout << largest << endl;
         sum += largest;
     }

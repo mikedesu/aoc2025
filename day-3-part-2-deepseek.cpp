@@ -1,10 +1,8 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <cmath>
 #include <vector>
-#include <cstdlib>
-
+#include <climits>
 
 using std::cout;
 using std::endl;
@@ -12,39 +10,53 @@ using std::max;
 using std::string;
 using std::vector;
 
-
 vector<int> nums;
 string n = "";
 
-// this var was declared by deepseek
-unsigned long dp[100][13];
+long long dp[105][15]; // dp[i][j] = max number with j digits starting at position i
 
+long long power10(int exp) {
+    long long result = 1;
+    while(exp-- > 0) {
+        result *= 10;
+    }
+    return result;
+}
 
-// this function was written by deepseek
-unsigned long get_largest_dp() {
+long long get_largest_dp() {
     int len = n.length();
     int desired_count = 12;
+    
     // Initialize DP table
-    for (int i = 0; i <= len; i++) {
-        for (int j = 0; j <= desired_count; j++) {
-            if (j == 0)
-                dp[i][j] = 0;
-            else
-                dp[i][j] = -1;
+    for(int i=0; i<=len; i++) {
+        for(int j=0; j<=desired_count; j++) {
+            dp[i][j] = -1;
         }
     }
-
+    
+    // Base case: 0 digits remaining
+    for(int i=0; i<=len; i++) {
+        dp[i][0] = 0;
+    }
+    
     // Fill table bottom-up
-    for (int i = len - 1; i >= 0; i--) {
-        for (int j = 1; j <= desired_count; j++) {
+    for(int i=len-1; i>=0; i--) {
+        for(int j=1; j<=desired_count; j++) {
             // Option 1: Take current digit
-            unsigned long take = nums[i] * pow(10, j - 1) + (i + 1 <= len ? dp[i + 1][j - 1] : 0);
+            long long take = nums[i] * power10(j-1);
+            if(i+1 <= len && dp[i+1][j-1] != -1) {
+                take += dp[i+1][j-1];
+            } else {
+                take = -1;
+            }
+            
             // Option 2: Skip current digit
-            unsigned long skip = (i + 1 <= len ? dp[i + 1][j] : 0);
+            long long skip = (i+1 <= len) ? dp[i+1][j] : -1;
+            
             dp[i][j] = max(take, skip);
         }
     }
-
+    
     return dp[0][desired_count];
 }
 
@@ -66,7 +78,7 @@ int main(int argc, char* argv[]) {
 
     char buffer[2048] = {0};
 
-    unsigned long sum = 0;
+    long long sum = 0;
     while (!feof(infile)) {
         char* ptr = fgets(buffer, 2048, infile);
         if (!ptr) {
@@ -84,7 +96,7 @@ int main(int argc, char* argv[]) {
             nums.push_back(val);
         }
 
-        unsigned long largest = get_largest_dp();
+        long long largest = get_largest_dp();
         cout << largest << endl;
         sum += largest;
     }

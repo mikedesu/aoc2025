@@ -25,42 +25,32 @@ unsigned long long power10(int exp) {
     return result;
 }
 
-unsigned long long get_largest_dp() {
-    int len = nums.size();
-    int desired_count = 12;
+string get_largest_12_digits() {
+    string num_str;
+    for (int d : nums) {
+        num_str += to_string(d);
+    }
+    int len = num_str.length();
+    const int k = len - 12;
     
-    // If input is exactly 12 digits, return it as is
-    if (len == desired_count) {
-        unsigned long long result = 0;
-        for (int d : nums) {
-            result = result * 10 + d;
+    if (k <= 0) return num_str;
+    
+    string result;
+    for (char c : num_str) {
+        while (!result.empty() && c > result.back() && k > 0) {
+            result.pop_back();
+            k--;
         }
-        return result;
+        result.push_back(c);
     }
     
-    // Initialize DP table
-    for(int i=0; i<=len; i++) {
-        for(int j=0; j<=desired_count; j++) {
-            dp[i][j] = 0;
-        }
+    // Truncate to exactly 12 digits if needed
+    if (result.length() > 12) {
+        result = result.substr(0, 12);
     }
     
-    // Base case: single digit
-    for(int i=0; i<len; i++) {
-        dp[i][1] = nums[i];
-    }
-    
-    // Fill table bottom-up
-    for(int j=2; j<=desired_count; j++) {
-        for(int i=0; i<=len-j; i++) {
-            // Option 1: Take current digit and build from remaining
-            unsigned long long take = nums[i] * power10(j-1) + dp[i+1][j-1];
-            // Option 2: Skip current digit
-            unsigned long long skip = dp[i+1][j];
-            
-            dp[i][j] = max(take, skip);
-        }
-    }
+    return result;
+}
     
     return dp[0][desired_count];
 }
@@ -102,9 +92,9 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        unsigned long long largest = get_largest_dp();
+        string largest = get_largest_12_digits();
         cout << largest << endl;
-        sum += largest;
+        sum += stoull(largest);
     }
     fclose(infile);
 

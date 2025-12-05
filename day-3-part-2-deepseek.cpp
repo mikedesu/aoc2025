@@ -9,6 +9,7 @@ using std::endl;
 using std::max;
 using std::string;
 using std::vector;
+using std::reverse;
 
 vector<int> nums;
 string n = "";

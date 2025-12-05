@@ -25,13 +25,9 @@ unsigned long long power10(int exp) {
     return result;
 }
 
-string get_largest_12_digits() {
-    string num_str;
-    for (int d : nums) {
-        num_str += to_string(d);
-    }
+string get_largest_subnumber(const string& num_str, int digits) {
     int len = num_str.length();
-    int k = len - 12;  // Changed from const int to int
+    int k = len - digits;
     
     if (k <= 0) return num_str;
     
@@ -44,11 +40,26 @@ string get_largest_12_digits() {
         result.push_back(c);
     }
     
-    // Truncate to exactly 12 digits if needed
-    if (result.length() > 12) {
-        result = result.substr(0, 12);
+    // Ensure exactly 'digits' length
+    result = result.substr(0, digits);
+    return result;
+}
+
+string string_add(const string& a, const string& b) {
+    string result;
+    int carry = 0;
+    int i = a.length() - 1;
+    int j = b.length() - 1;
+    
+    while (i >= 0 || j >= 0 || carry > 0) {
+        int sum = carry;
+        if (i >= 0) sum += a[i--] - '0';
+        if (j >= 0) sum += b[j--] - '0';
+        carry = sum / 10;
+        result.push_back((sum % 10) + '0');
     }
     
+    reverse(result.begin(), result.end());
     return result;
 }
 
@@ -70,7 +81,7 @@ int main(int argc, char* argv[]) {
 
     char buffer[2048] = {0};
 
-    unsigned long long sum = 0;
+    string sum_str;
     while (!feof(infile)) {
         char* ptr = fgets(buffer, 2048, infile);
         if (!ptr) {
@@ -89,13 +100,24 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        string largest = get_largest_12_digits();
+        string num_str;
+        for (int d : nums) {
+            num_str += to_string(d);
+        }
+
+        string largest = get_largest_subnumber(num_str, 12);
         cout << largest << endl;
-        sum += stoull(largest);
+
+        // Store sum as string to avoid overflow
+        if (sum_str.empty()) {
+            sum_str = largest;
+        } else {
+            sum_str = string_add(sum_str, largest);
+        }
     }
     fclose(infile);
 
-    cout << sum << endl;
+    cout << sum_str << endl;
 
 
     return 0;

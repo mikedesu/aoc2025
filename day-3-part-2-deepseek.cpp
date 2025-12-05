@@ -75,6 +75,8 @@ int main(int argc, char* argv[]) {
         buffer[strlen(buffer) - 1] = 0;
         string n = string(buffer);
 
+        cout << n << ": ";
+
         nums.clear();
         for (int i = 0; i < n.length(); i++) {
             char c = n[i];

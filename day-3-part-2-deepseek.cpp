@@ -1,38 +1,22 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <vector>
 #include <climits>
 #include <algorithm>
 
 using std::cout;
 using std::endl;
-using std::max;
-using std::string;
-using std::vector;
 using std::reverse;
-
-vector<int> nums;
-string n = "";
+using std::string;
 
 using namespace std;
-
-unsigned long long dp[105][15]; // dp[i][j] = max number with j digits starting at position i
-
-unsigned long long power10(int exp) {
-    unsigned long long result = 1;
-    while(exp-- > 0) {
-        result *= 10;
-    }
-    return result;
-}
 
 string get_largest_subnumber(const string& num_str, int digits) {
     int len = num_str.length();
     int k = len - digits;
-    
+
     if (k <= 0) return num_str;
-    
+
     string result;
     for (char c : num_str) {
         while (!result.empty() && c > result.back() && k > 0) {
@@ -41,7 +25,7 @@ string get_largest_subnumber(const string& num_str, int digits) {
         }
         result.push_back(c);
     }
-    
+
     // Ensure exactly 'digits' length
     result = result.substr(0, digits);
     return result;
@@ -52,7 +36,7 @@ string string_add(const string& a, const string& b) {
     int carry = 0;
     int i = a.length() - 1;
     int j = b.length() - 1;
-    
+
     while (i >= 0 || j >= 0 || carry > 0) {
         int sum = carry;
         if (i >= 0) sum += a[i--] - '0';
@@ -60,7 +44,7 @@ string string_add(const string& a, const string& b) {
         carry = sum / 10;
         result.push_back((sum % 10) + '0');
     }
-    
+
     reverse(result.begin(), result.end());
     return result;
 }
@@ -90,25 +74,9 @@ int main(int argc, char* argv[]) {
             break;
         }
         buffer[strlen(buffer) - 1] = 0;
-        string input_num = string(buffer);
-        if (input_num.empty()) continue;
 
-        cout << input_num << ": ";
-
-        nums.clear();
-        for (char c : input_num) {
-            if (c >= '0' && c <= '9') {
-                nums.push_back(c - '0');
-            }
-        }
-
-        string num_str;
-        for (int d : nums) {
-            num_str += to_string(d);
-        }
-
+        string num_str = string(buffer);
         string largest = get_largest_subnumber(num_str, 12);
-        cout << largest << endl;
 
         // Store sum as string to avoid overflow
         if (sum_str.empty()) {
@@ -120,7 +88,6 @@ int main(int argc, char* argv[]) {
     fclose(infile);
 
     cout << sum_str << endl;
-
 
     return 0;
 }

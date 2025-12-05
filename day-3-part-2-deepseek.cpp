@@ -27,27 +27,29 @@ long long get_largest_dp() {
     int len = n.length();
     int desired_count = 12;
     
+    // If number is 12 digits or shorter, just return the number itself
+    if (len <= desired_count) {
+        long long result = 0;
+        for (int d : nums) {
+            result = result * 10 + d;
+        }
+        return result;
+    }
+
     // Initialize DP table
     for(int i=0; i<=len; i++) {
         for(int j=0; j<=desired_count; j++) {
-            dp[i][j] = -1;
+            dp[i][j] = (j == 0) ? 0 : -1;
         }
-    }
-    
-    // Base case: 0 digits remaining
-    for(int i=0; i<=len; i++) {
-        dp[i][0] = 0;
     }
     
     // Fill table bottom-up
     for(int i=len-1; i>=0; i--) {
         for(int j=1; j<=desired_count; j++) {
             // Option 1: Take current digit
-            long long take = nums[i] * power10(j-1);
-            if(i+1 <= len && dp[i+1][j-1] != -1) {
-                take += dp[i+1][j-1];
-            } else {
-                take = -1;
+            long long take = -1;
+            if (i+1 <= len && dp[i+1][j-1] != -1) {
+                take = nums[i] * power10(j-1) + dp[i+1][j-1];
             }
             
             // Option 2: Skip current digit

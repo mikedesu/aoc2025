@@ -3,6 +3,7 @@
 #include <cstring>
 #include <vector>
 #include <climits>
+#include <algorithm>
 
 using std::cout;
 using std::endl;

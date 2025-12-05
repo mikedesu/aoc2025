@@ -31,7 +31,7 @@ string get_largest_12_digits() {
         num_str += to_string(d);
     }
     int len = num_str.length();
-    const int k = len - 12;
+    int k = len - 12;  // Changed from const int to int
     
     if (k <= 0) return num_str;
     
@@ -50,9 +50,6 @@ string get_largest_12_digits() {
     }
     
     return result;
-}
-    
-    return dp[0][desired_count];
 }
 
 
